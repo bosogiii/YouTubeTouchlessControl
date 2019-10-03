@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Long polling chatting</title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <script src="https://npmcdn.com/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<textarea cols="40" rows="20" id="chatArea"></textarea><br>
+<input type="text" name="chatText" id="test">&nbsp;
+<!-- <input type="button" value="보내기" onclick="reqMsg()">
+<script>
+    function reqMsg() {
+        let chatText = $(`[name="chatText"]`);
+        let sendData = chatText.val();
+        chatText.val('');
+        console.log(sendData);
+        axios.post('http://localhost:3000/msg', {sendData})
+            .then((res) => {
+                console.log('post success');
+            })
+            .catch((res) => {
+                console.log('post fail');
+            })
+    }
+
+    function resMsg() {
+        axios.get('http://localhost:3000/msg')
+            .then((res) => {
+                console.log('get success');
+                let chatArea = $('#chatArea');
+                chatArea.val(chatArea.val() + res.data.data + '\n');
+                resMsg();
+            })
+            .catch((res) => {
+                console.log('get fail');
+                setTimeout(resMsg, 5000);
+            })
+    }
+
+    resMsg();
+</script> -->
+</body>
+</html>

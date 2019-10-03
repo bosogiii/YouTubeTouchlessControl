@@ -1,0 +1,131 @@
+<!-- 1~5 : youtube api step -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://npmcdn.com/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+</head>
+  <body>
+    <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
+    <div id="player"></div>
+
+    <script>
+      //to load video list from youtube
+      //default : get 10 videos in vidList
+      //YOUTUBE DATA API v3. Search
+      //help for params : https://developers.google.com/youtube/v3/docs/search/list#--
+
+      var optionParams={
+        q:"잔나비",
+        part:"id",
+        key:"AIzaSyD00N6Vnz9LFFQafkO-EVvGLnGeQtf4hcU",
+        type:"video",
+        maxResults:10,
+        regionCode:"KR",
+        videoDuration:"short"
+       };
+
+      //한글을 검색어로 전달하기 위해선 url encoding 필요!
+      optionParams.q=encodeURI(optionParams.q);
+
+      var url="https://www.googleapis.com/youtube/v3/search?";
+      for(var option in optionParams){
+        url+=option+"="+optionParams[option]+"&";
+      }
+
+      //url의마지막에 붙어있는 & 정리
+      url=url.substr(0, url.length-1);
+      var vidList = []; 
+
+            function getVideoList(){
+              axios.get(url)
+                .then((res) => {
+      var vid = res.data.items;
+
+      for(var content in vid){
+        vidList.push(vid[content].id.videoId)
+      }
+      console.log(vidList);
+                })
+                .catch((res) => {
+                    console.log('failed to load VidelList');
+                })
+            }
+      getVideoList();
+
+
+
+      // 2. This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+      var player;
+
+
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          height: '360',
+          width: '640',
+          loadPlaylist:{
+          listType:'playlist',
+          list: vidList,
+          index:parseInt(0),
+          suggestedQuality:'small'
+        },
+          // videoId: ['liJVSwOiiwg','XNSNti8q_UQ']
+          events: {
+            'onReady': onPlayerReady,
+            //'onStateChange': onPlayerStateChange
+          }
+        });
+      }
+
+      // 4. The API will call this function when the video player is ready.
+      function onPlayerReady(event) {
+        // event.target.playVideo();
+        event.target.loadPlaylist(vidList);
+      }
+
+      // 5. The API calls this function when the player's state changes.
+      //    The function indicates that when playing a video (state=1),
+      //    the player should play for six seconds and then stop.
+      var done = false;
+      function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING && !done) {
+          setTimeout(stopVideo, 1000);
+          done = true;
+        }
+      }
+      function stopVideo() {
+        player.stopVideo();
+      }
+
+      function resMsg() {
+
+        console.log('resMSG');
+         axios.get('http://localhost:3000/msg')
+          .then((res) => {
+          if(res.data.data == 'start'){
+            player.playVideo();
+          }
+          if(res.data.data == 'stop'){
+            player.stopVideo();
+          }
+          resMsg();
+          })
+          .catch((res) => {
+              console.log('get fail');
+              setTimeout(resMsg, 5000);
+          })
+      }
+      resMsg();
+
+    </script>
+  </body>
+</html>
