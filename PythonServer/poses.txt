@@ -1,0 +1,6 @@
+right
+pause
+mute
+left
+garbage
+play
