@@ -5,10 +5,60 @@
 <head>
     <script src="https://npmcdn.com/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link type="text/css" href="CSS/Button.css" rel="stylesheet" />
+
+    <style>    
+    form{
+      sytle="display: inline"
+    }
+     a:link  { text-decoration: none; color: #000}
+     a:visited  { text-decoration: none; color: #000}
+
+    #Head {
+    padding: 30px;
+    background-color: blue;
+
+
+    text-align: center; 
+    font-size: 2.4em;
+    text-shadow: 3px 3px #000;
+    }
+    #grid{
+      border : 3px solid gray;
+      display : grid;
+      grid-template-columns: 200px 1fr;
+    }
+    .setgrid{
+      display : grid;
+      grid-template-columns: 80px 1fr;
+    }
+    #dgrid{
+      display : grid;
+      grid-template-columns: 100px 100px 100px 100px;
+      grid-gap: 10px;
+    }
+    #deletegrid{
+      border : 3px solid white;
+    }
+    #right{
+      padding-left : 5px;
+    }
+    </style>
 </head>
   <body>
+    <header id="Head"><a href="/" style="color:white">NEWS Today</a></header>
+    <div id="grid">
+    <div class="leftgrid">
+      <h2>1.Motions</h2>
+    </div >
+    <div id="right">
+      <div id="player"></div>
+
+    </div>
+    </div>
+
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
-    <div id="player"></div>
+    <!-- <div id="player"></div> -->
 
     <script>
       //to load video list from youtube
@@ -17,11 +67,13 @@
       //help for params : https://developers.google.com/youtube/v3/docs/search/list#--
 
       var optionParams={
-        q:"블랙핑크",
+        q:"뉴스",
         part:"id",
+        channelId:"UCTHCOPwqNfZ0uiKOvFyhGwg",
         key:"AIzaSyD00N6Vnz9LFFQafkO-EVvGLnGeQtf4hcU",
+        order:"date",
         type:"video",
-        maxResults:10,
+        maxResults:20,
         regionCode:"KR",
         videoDuration:"short"
        };
@@ -49,7 +101,7 @@
       console.log(vidList);
                 })
                 .catch((res) => {
-                    console.log('failed to load VidelList');
+                    console.log('failed to load VideoList');
                 })
             }
       getVideoList();
@@ -67,11 +119,11 @@
       //    after the API code downloads.
       var player;
 
-
+//360*640
       function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
-          height: '360',
-          width: '640',
+          height: '450',
+          width: '800',
           loadPlaylist:{
           listType:'playlist',
           list: vidList,
@@ -114,8 +166,20 @@
           if(res.data.data == 'start'){
             player.playVideo();
           }
-          if(res.data.data == 'pause'){
+          if(res.data.data == 'stop'){
             player.pauseVideo();
+          }
+          if(res.data.data == 'next'){
+            player.nextVideo();
+          }
+          if(res.data.data == 'previous'){
+            player.previousVideo();
+          }
+          if(res.data.data == 'mute'){
+            player.mute();
+          }
+          if(res.data.data == 'unmute'){
+            player.unMute();
           }
           resMsg();
           })
