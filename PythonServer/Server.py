@@ -81,7 +81,7 @@ if __name__ == '__main__':
                 continue
 
             cv2.namedWindow('Hand Result', cv2.WINDOW_NORMAL)
-            cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
+            #cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
 
             try:
                 output_frame = output_q.get(timeout=1)
@@ -102,7 +102,7 @@ if __name__ == '__main__':
             if (inferences is not None):
                 gui.drawInferences(inferences, poses)
                 max_idx = np.argmax(inferences)
-                requester.getStatus(box, poses[max_idx])
+                requester.setStatus(box, poses[max_idx])
 
             if (output_frame is not None):
                 output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)

@@ -1,6 +1,6 @@
-right
+next
 pause
 mute
-left
+previous
 garbage
 play

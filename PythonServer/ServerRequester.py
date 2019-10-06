@@ -12,26 +12,46 @@ class ServerRequester:
         self.width = width
         self.height = height
 
+        self.p1 = None
+        self.p2 = None
+
         self.fps = 10
 
-    def getStatus(self, box, trigger):
-        if trigger == 'garbage':
-            return
-
-        if trigger != self.triggered:
+    def setStatus(self, box, trigger):
+        print(trigger)
+        if self.triggered is None:
             self.triggered = trigger
             self.num_frame = 0
-            return
-        else:
-            self.triggered = trigger
+            self.p1 = box[0]
+            self.p2 = box[1]
 
         self.num_frame += 1
 
-        if self.num_frame == self.fps:
-            self.requester(self.triggered)
+        if self.num_frame == self.fps/2:
+            if self.triggered == 'play':
+                self.requester(self.triggered)
+            elif self.triggered == 'pause':
+                self.requester(self.triggered)
+            elif self.triggered == 'mute':
+                if box[0][0] - self.p1[0] > 20:
+                    self.requester('mute')
+                elif box[0][0] - self.p1[0] < -20:
+                    self.requester('unmute')
+
+        if self.triggered == 'next' and trigger == 'previous':
+            self.requester('next')
+        elif self.triggered == 'previous' and trigger == 'next':
+            self.requester('previous')
+
+        if self.num_frame == self.fps*3:
+            self.triggered = None
+            self.num_frame = 0
 
 
     def requester(self, cmd):
+        self.triggered = None
+        self.num_frame = 0
+        print(cmd)
         try:
             print("send " + cmd + " to webServer")
             data = {'msg': cmd}

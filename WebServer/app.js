@@ -42,6 +42,7 @@ app.post('/gesture',function(req,res){
         atom.send({data});
     }
     session.resList = [];
+    res.send('hi');
 
 });
 
