@@ -6,7 +6,7 @@ from multiprocessing import Queue, Pool, Process
 from utils.detector_utils import WebcamVideoStream
 import datetime
 import gui;
-import ServerRequester as requester
+from ServerRequester import ServerRequester as Requester
 import numpy as np
 
 frame_processed = 0
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     #making queues for process
     input_q = Queue(maxsize=queue_size)
     output_q = Queue(maxsize=queue_size)
-    cropped_output_q = Queue(maxsize=queue_size)
+    boxes_q = Queue(maxsize=queue_size)
     inferences_q = Queue(maxsize=queue_size)
 
     #camera initialization
@@ -42,6 +42,9 @@ if __name__ == '__main__':
     cap_params['num_hands_detect'] = num_hands
     print(cap_params)
 
+    #initialize server requester
+    requester = Requester(width=cap_params['im_width'], height=cap_params['im_height'])
+
     #Set poses for inference
     poses = []
     with open('poses.txt', 'r') as f:
@@ -52,12 +55,10 @@ if __name__ == '__main__':
                 poses.append(line)
     print(poses)
 
-    #requester = ServerRequester(output_q, cropped_output_q, inferences_q, poses).start()
-
     try:
         #making thread Pool for image process
         pool = Pool(num_worker, Worker.worker, (
-            input_q, output_q, cropped_output_q, inferences_q, cap_params, frame_processed))
+            input_q, output_q, boxes_q, inferences_q, cap_params, frame_processed))
 
         pool.close()
         start_time = datetime.datetime.now()
@@ -84,7 +85,7 @@ if __name__ == '__main__':
 
             try:
                 output_frame = output_q.get(timeout=1)
-                cropped_frame = cropped_output_q.get(timeout=1)
+                box = boxes_q.get(timeout=1)
             except Exception as e:
                 pass
 
@@ -101,17 +102,7 @@ if __name__ == '__main__':
             if (inferences is not None):
                 gui.drawInferences(inferences, poses)
                 max_idx = np.argmax(inferences)
-                #print(poses[max_idx])
-                requester.requester(poses[max_idx])
-
-            if (cropped_frame is not None):
-                cropped_frame = cv2.cvtColor(cropped_frame, cv2.COLOR_RGB2BGR)
-                if (display):
-                    cv2.resizeWindow('Cropped', 450, 300)
-                    cv2.imshow('Cropped', cropped_frame)
-
-                    if cv2.waitKey(1) & 0xFF == ord('q'):
-                        break;
+                requester.getStatus(box, poses[max_idx])
 
             if (output_frame is not None):
                 output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
