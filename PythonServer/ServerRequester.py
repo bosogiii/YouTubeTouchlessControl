@@ -18,7 +18,7 @@ class ServerRequester:
         self.fps = 10
 
     def setStatus(self, box, trigger):
-        print(trigger)
+
         if self.triggered is None:
             self.triggered = trigger
             self.num_frame = 0
@@ -32,18 +32,17 @@ class ServerRequester:
                 self.requester(self.triggered)
             elif self.triggered == 'pause':
                 self.requester(self.triggered)
+            elif self.triggered == 'next' and trigger == 'previous':
+                self.requester('next')
+            elif self.triggered == 'previous' and trigger == 'next':
+                self.requester('previous')
             elif self.triggered == 'mute':
-                if box[0][0] - self.p1[0] > 20:
+                if box[0][0] - self.p1[0] > self.width/2:
                     self.requester('mute')
-                elif box[0][0] - self.p1[0] < -20:
+                elif box[0][0] - self.p1[0] < -self.width/2:
                     self.requester('unmute')
 
-        if self.triggered == 'next' and trigger == 'previous':
-            self.requester('next')
-        elif self.triggered == 'previous' and trigger == 'next':
-            self.requester('previous')
-
-        if self.num_frame == self.fps*3:
+        if self.num_frame == self.fps:
             self.triggered = None
             self.num_frame = 0
 
@@ -51,10 +50,11 @@ class ServerRequester:
     def requester(self, cmd):
         self.triggered = None
         self.num_frame = 0
-        print(cmd)
+
         try:
             print("send " + cmd + " to webServer")
             data = {'msg': cmd}
-            r = requests.post(self.url, data=json.dumps(data), headers=self.headers, timeout=1)
+            r = requests.post(self.url, data=json.dumps(data), headers=self.headers, timeout=0.1)
+            print(r)
         except Exception as e:
             pass

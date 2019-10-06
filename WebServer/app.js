@@ -38,11 +38,10 @@ app.post('/gesture',function(req,res){
     let data = req.body.msg;
     //console.log(req.body);
     for (let atom of session.resList) {
-    console.log('sending' + data);
+    console.log('sending ' + data);
         atom.send({data});
     }
     session.resList = [];
-    res.send('hi');
 
 });
 
