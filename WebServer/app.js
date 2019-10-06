@@ -36,13 +36,11 @@ app.post('/gesture',function(req,res){
     var msg = req.body.msg;
     console.log("python: " + msg);
     let data = req.body.msg;
-    //console.log(req.body);
     for (let atom of session.resList) {
     console.log('sending ' + data);
         atom.send({data});
     }
     session.resList = [];
-
 });
 
 // catch 404 and forward to error handler
