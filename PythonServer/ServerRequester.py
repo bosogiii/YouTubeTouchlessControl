@@ -15,9 +15,9 @@ class ServerRequester:
         self.p1 = None
         self.p2 = None
 
-        self.fps = 10
+        self.fps = 6
 
-    def setStatus(self, box, trigger):
+    def setStatus(self, box, trigger, fps):
 
         if self.triggered is None:
             self.triggered = trigger
@@ -27,7 +27,7 @@ class ServerRequester:
 
         self.num_frame += 1
 
-        if self.num_frame == self.fps/2:
+        if self.num_frame > self.fps/2:
             if self.triggered == 'play':
                 self.requester(self.triggered)
             elif self.triggered == 'pause':
@@ -37,10 +37,10 @@ class ServerRequester:
             elif self.triggered == 'previous' and trigger == 'next':
                 self.requester('previous')
             elif self.triggered == 'mute':
-                if box[0][0] - self.p1[0] > self.width/2:
-                    self.requester('mute')
-                elif box[0][0] - self.p1[0] < -self.width/2:
+                if self.p1[0] - box[0][0] > self.width/3:
                     self.requester('unmute')
+                elif box[0][0] - self.p1[0] > self.width/3:
+                    self.requester('mute')
 
         if self.num_frame == self.fps:
             self.triggered = None

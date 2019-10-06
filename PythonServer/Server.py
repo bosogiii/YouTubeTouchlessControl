@@ -81,11 +81,10 @@ if __name__ == '__main__':
                 continue
 
             cv2.namedWindow('Hand Result', cv2.WINDOW_NORMAL)
-            #cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
 
             try:
-                output_frame = output_q.get(timeout=1)
-                box = boxes_q.get(timeout=1)
+                output_frame = output_q.get()
+                box = boxes_q.get()
             except Exception as e:
                 pass
 
@@ -102,7 +101,8 @@ if __name__ == '__main__':
             if (inferences is not None):
                 gui.drawInferences(inferences, poses)
                 max_idx = np.argmax(inferences)
-                requester.setStatus(box, poses[max_idx])
+                requester.setStatus(box, poses[max_idx], fps)
+                inferences = None
 
             if (output_frame is not None):
                 output_frame = cv2.cvtColor(output_frame, cv2.COLOR_RGB2BGR)
@@ -113,13 +113,11 @@ if __name__ == '__main__':
                     if cv2.waitKey(1) & 0xFF == ord('q'):
                         break
 
-
     except Exception as e:
-        print('imhere')
         print(str(e))
 
     pool.terminate()
-    #cap.stop()
+    cap.stop()
     cv2.destroyAllWindows()
 
 
