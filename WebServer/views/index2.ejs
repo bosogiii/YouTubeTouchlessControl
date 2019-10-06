@@ -138,14 +138,14 @@
         });
       }
       
-      var isStarted = false;
+      var isPlayed = false;
       var isMuted = false;
 
       // 4. The API will call this function when the video player is ready.
       function onPlayerReady(event) {
         event.target.loadPlaylist(vidList);
         player.playVideo();
-        isStarted = true;
+        isPlayed = true;
       }
 
       // 5. The API calls this function when the player's state changes.
@@ -169,13 +169,13 @@
         console.log('resMSG');
          axios.get('http://localhost:3000/msg')
           .then((res) => {
-          if(res.data.data == 'start' && !isStarted){
+          if(res.data.data == 'play' && !isPlayed){
             player.playVideo();
-            isStarted = True;
+            isPlayed = true;
           }
-          if(res.data.data == 'stop'){
+          if(res.data.data == 'pause' && isPlayed){
             player.pauseVideo();
-            isStarted = false;
+            isPlayed = false;
           }
           if(res.data.data == 'next'){
             player.nextVideo();
@@ -191,7 +191,7 @@
             player.unMute();
             isMuted = false;
           }
-          console.log("isStarted : "+isStarted);
+          console.log("isPlayed : "+isPlayed);
           console.log("isMuted : "+isMuted);
           resMsg();
           })
