@@ -1,14 +1,48 @@
 <!-- 1~5 : youtube api step -->
 
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <script src="https://npmcdn.com/axios/dist/axios.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <!-- for CSS -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900|Quicksand:400,700|Questrial" rel="stylesheet" />
+    <link href="/stylesheets/default.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/stylesheets/fonts.css" rel="stylesheet" type="text/css" media="all" />
+
+
 </head>
   <body>
+    <!-- for CSS body -->
+    <div >
+    <div id="header" class="container">
+        <div id="logo">
+            <h1><a href="#">News Today</a></h1>
+            <div id="menu">
+                <ul>
+                    <li class="active"><a href="#" accesskey="1" title="">Yonhap</a></li>
+                    <li><a href="#" accesskey="2" title="">KBS</a></li>
+                    <li><a href="#" accesskey="3" title="">SBS</a></li>
+                    <li><a href="#" accesskey="4" title="">JTBC</a></li>
+                    <li><a href="#" accesskey="5" title="">ADD</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div >
+    <div id="welcome" class="container">
+      <div id="player"></div>
+      <p>Hanyang Univ. Graduation Project. </p>
+    </div>
+</div>
+
+
+
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
-    <div id="player"></div>
+    <!-- <div id="player"></div> -->
 
     <script>
       //to load video list from youtube
@@ -17,11 +51,13 @@
       //help for params : https://developers.google.com/youtube/v3/docs/search/list#--
 
       var optionParams={
-        q:"잔나비",
+        q:"뉴스",
         part:"id",
+        channelId:"UCTHCOPwqNfZ0uiKOvFyhGwg",
         key:"AIzaSyD00N6Vnz9LFFQafkO-EVvGLnGeQtf4hcU",
+        order:"date",
         type:"video",
-        maxResults:10,
+        maxResults:20,
         regionCode:"KR",
         videoDuration:"short"
        };
@@ -49,7 +85,7 @@
       console.log(vidList);
                 })
                 .catch((res) => {
-                    console.log('failed to load VidelList');
+                    console.log('failed to load VideoList');
                 })
             }
       getVideoList();
@@ -67,11 +103,13 @@
       //    after the API code downloads.
       var player;
 
-
+//360*640
+        var hei = 360*1.5;
+        var wid = 640*1.5;
       function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
-          height: '360',
-          width: '640',
+          height: hei,
+          width: wid,
           loadPlaylist:{
           listType:'playlist',
           list: vidList,
@@ -85,11 +123,15 @@
           }
         });
       }
+      
+      var isPlayed = false;
+      var isMuted = false;
 
       // 4. The API will call this function when the video player is ready.
       function onPlayerReady(event) {
-        // event.target.playVideo();
         event.target.loadPlaylist(vidList);
+        player.playVideo();
+        isPlayed = true;
       }
 
       // 5. The API calls this function when the player's state changes.
@@ -106,17 +148,37 @@
         player.stopVideo();
       }
 
+
+
       function resMsg() {
 
         console.log('resMSG');
          axios.get('http://localhost:3000/msg')
           .then((res) => {
-          if(res.data.data == 'start'){
+          if(res.data.data == 'play' && !isPlayed){
             player.playVideo();
+            isPlayed = true;
           }
-          if(res.data.data == 'stop'){
-            player.stopVideo();
+          if(res.data.data == 'pause' && isPlayed){
+            player.pauseVideo();
+            isPlayed = false;
           }
+          if(res.data.data == 'next'){
+            player.nextVideo();
+          }
+          if(res.data.data == 'previous'){
+            player.previousVideo();
+          }
+          if(res.data.data == 'mute' && !isMuted){
+            player.mute();
+            isMuted = true;
+          }
+          if(res.data.data == 'unmute' && isMuted){
+            player.unMute();
+            isMuted = false;
+          }
+          console.log("isPlayed : "+isPlayed);
+          console.log("isMuted : "+isMuted);
           resMsg();
           })
           .catch((res) => {
