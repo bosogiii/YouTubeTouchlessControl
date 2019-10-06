@@ -1,6 +1,7 @@
 
 # Youtube Touchless Controller
-
+2019졸업프로젝트
+한양대학교 구민우, 송보석
 PythonServer(Hand Detection using Deep Learning) + WebServer(using Youtube API, Node.js)
 
 ## PythonServer
