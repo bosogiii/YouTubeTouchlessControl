@@ -4,6 +4,10 @@
 한양대학교 구민우, 송보석
 PythonServer(Hand Detection using Deep Learning) + WebServer(using Youtube API, Node.js)
 
+## 실행영상
+[![Video Label](http://img.youtube.com/vi/jUCKPtsSwRY/0.jpg)](https://www.youtube.com/watch?v=jUCKPtsSwRY)
+> 프로젝트의 실행 영상을 유튜브 동영상으로 볼 수 있습니다.
+
 ## PythonServer
 
 1.Detect Hand in the clip
