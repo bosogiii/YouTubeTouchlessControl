@@ -24,7 +24,7 @@ Reference : https://github.com/MrEliptik/HandPose
 
 서버->클라이언트 통신방법
 1.소켓통신
-2.Late pooling -> 해당 프로젝트에서 사용
+2.Long polling -> 해당 프로젝트에서 사용
 ```js
 //server side
 //client -> Node.js
